@@ -24,6 +24,17 @@ const adminController = {
         res.redirect('/admin/restaurants')
       })
       .catch(error => next(error))
+  },
+  getRestaurant: (req, res, next) => {
+    // rest_id 被定義在 admin.js
+    Restaurant.findByPk(req.params.rest_id, {
+      raw: true
+    })
+      .then(restaurant => {
+        if (!restaurant) throw new Error("The restaurant doesn't exist :(")
+        res.render('admin/restaurant', { restaurant })
+      })
+      .catch(err => next(err))
   }
 }
 module.exports = adminController
