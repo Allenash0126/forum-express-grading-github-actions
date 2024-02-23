@@ -1,4 +1,5 @@
 const { Restaurant } = require('../models')
+const { localFileHandler } = require('../helpers/file-helpers')
 // 解構賦值如下
 // const db = require('../models')
 // const Restaurant = db.Restaurant
@@ -18,7 +19,10 @@ const adminController = {
     const { name, tel, address, openingHours, description } = req.body
     if (!name) throw new Error('Restaurant name is required!')
 
-    Restaurant.create({ name, tel, address, openingHours, description })
+    const { file } = req
+
+    localFileHandler(file)
+      .then(filePath => Restaurant.create({ name, tel, address, openingHours, description, image: filePath || null }))
       .then(() => {
         req.flash('success', 'Restaurant was created successfully!')
         res.redirect('/admin/restaurants')
@@ -50,15 +54,22 @@ const adminController = {
   putRestaurant: (req, res, next) => {
     const { name, tel, address, openingHours, description } = req.body
     if (!name) throw new Error('Restaurant name is required!')
-    Restaurant.findByPk(req.params.rest_id)
-      .then(restaurant => {
+
+    const { file } = req
+
+    Promise.all([
+      Restaurant.findByPk(req.params.rest_id),
+      localFileHandler(file)
+    ])
+      .then(([restaurant, filePath]) => {
         if (!restaurant) throw new Error("Restaurant didn't exist!")
-        restaurant.update({
+        return restaurant.update({
           name,
           tel,
           address,
           openingHours,
-          description
+          description,
+          image: filePath || restaurant.image
         })
       })
       .then(() => {
