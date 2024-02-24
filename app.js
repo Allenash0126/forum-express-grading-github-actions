@@ -26,8 +26,8 @@ app.use(methodOverride('_method'))
 app.use('/upload', express.static(path.join(__dirname, 'upload')))
 
 app.use((req, res, next) => {
-  res.locals.success_messages = req.flash('success')
-  res.locals.error_messages = req.flash('error')
+  res.locals.success_messages = req.flash('success_messages')
+  res.locals.error_messages = req.flash('error_messages')
   res.locals.user = getUser(req)
   next()
 })
