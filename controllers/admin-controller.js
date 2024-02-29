@@ -1,5 +1,4 @@
-const { Restaurant } = require('../models')
-const { User } = require('../models')
+const { Restaurant, User, Category } = require('../models')
 const { localFileHandler } = require('../helpers/file-helpers')
 // 解構賦值如下
 // const db = require('../models')
@@ -8,7 +7,9 @@ const { localFileHandler } = require('../helpers/file-helpers')
 const adminController = {
   getRestaurants: (req, res, next) => {
     Restaurant.findAll({
-      raw: true
+      raw: true,
+      nest:true,
+      include: [Category]
     })
       .then(restaurants => res.render('admin/restaurants', { restaurants }))
       .catch(error => next(error))
@@ -33,7 +34,9 @@ const adminController = {
   getRestaurant: (req, res, next) => {
     // rest_id 被定義在 admin.js
     Restaurant.findByPk(req.params.rest_id, {
-      raw: true
+      raw: true,
+      nest: true,
+      include: [Category]
     })
       .then(restaurant => {
         if (!restaurant) throw new Error("The restaurant doesn't exist :(")
