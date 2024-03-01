@@ -1,14 +1,27 @@
 {{>admin-tabs route='categories'}}
 <div class="d-flex align-items-center pt-3 pb-5 my-3 text-white-50 bg-purple">
-  <form action="/admin/categories" method="post" class="row">
-    <div class="col-auto">
-      <input class="form-control" type="text" name="name" id="name" placeholder="Category Name">
-    </div>
-    <div class="col-auto">
-      <button class="btn btn-success" type="submit">Creat</button>
-    </div>
-  </form>
+  {{#if category}}
+    <form action="/admin/categories/{{category.id}}?_method=PUT" method="post" class="row">
+      <div class="col-auto">
+        <input class="form-control" type="text" name="name" id="name" value="{{category.name}}">
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-warning" type="submit">Create</button>
+        <a href="/admin/categories">or Create new</a>
+      </div>
+    </form>
+  {{else}}
+    <form action="/admin/categories" method="post" class="row">
+      <div class="col-auto">
+        <input class="form-control" type="text" name="name" id="name" placeholder="Category Name">
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-success" type="submit">Creat</button>
+      </div>
+    </form>
+  {{/if}}
 </div>
+
 <table class="table align-middle">
   <thead class="thead-dark">
     <tr>
