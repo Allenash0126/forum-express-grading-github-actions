@@ -16,15 +16,27 @@ const restaurantsController = {
       })
   },
   getRestaurant: (req, res, next) => {
-    const { id } = req.params
-    return Restaurant.findByPk(id, {
-      raw: true, 
-      nest: true,
+    return Restaurant.findByPk(req.params.id, {
       include: Category
     })
     .then((restaurant) => {
-      res.render('restaurant', { restaurant })
+      restaurant.increment('viewCounts', { by: 1 })
+      return res.render('restaurant', { 
+        restaurant: restaurant.toJSON()
+      })      
     })
-  }
+  },
+  getDashboard: (req, res, next) => {
+    return Restaurant.findByPk(req.params.id, {
+      raw: true,
+      nest: true,
+      include: Category
+    })
+      .then((restaurant) => {
+        if(!restaurant) throw new Error('It does not exist:(')
+        return res.render('dashboard', { restaurant })
+      })         
+      .catch(err => next(err))
+  }   
 }
 module.exports = restaurantsController
