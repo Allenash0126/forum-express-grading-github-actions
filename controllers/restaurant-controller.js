@@ -49,6 +49,7 @@ const restaurantsController = {
         restaurant: restaurant.toJSON()
       })      
     })
+    .catch(err => next(err))
   },
   getDashboard: (req, res, next) => {
     return Restaurant.findByPk(req.params.id, {
