@@ -1,4 +1,4 @@
-const { User } = require('../models')
+const { User, Comment, Restaurant } = require('../models')
 const { localFileHandler } = require('../helpers/file-helpers')
 const bcrypt = require('bcryptjs')
 const helpers = require('../helpers/auth-helpers')
@@ -39,10 +39,17 @@ const userController = {
     const id = req.params.id
     helpers.isSignInUser(req, res)
 
-    return User.findByPk(id)
+    return User.findByPk(id, {
+      include: [{ model: Comment, include: Restaurant }]
+    })
       .then(user => {
         if(!user) throw new Error('User is wrong :(')
-        return res.render('users/profile', { user: user.toJSON() })
+        const userToJSON = user.toJSON()
+
+        return res.render('users/profile', { 
+          user: userToJSON,
+          commentCounts: userToJSON.Comments.length
+        })
       })
       .catch(err => next(err))
   }, 
@@ -60,20 +67,10 @@ const userController = {
   putUser: (req, res, next) => {
     const { name } = req.body
     if (!name) throw new Error(" User's name is required")
-    // const idSignIn  = req.user.id.toString()
     const id = req.params.id
     helpers.isSignInUser(req, res)
-    // if (Number(id) !== Number(req.user.id)) {
-    //   return res.redirect(`/users/${req.user.id}`)
-    // }
-
-    // if (idSignIn !== id) {
-    //   req.flash('error_messages', "User can't edit other's profile")
-    //   return res.redirect(`/users/${idSignIn}/edit`)
-    // }    
 
     const { file } = req
-    
     Promise.all([
       User.findByPk(id), 
       localFileHandler(file)

@@ -43,7 +43,7 @@ const restaurantsController = {
         { model: Comment, include: User}
       ]
     })
-    .then((restaurant) => {
+    .then((restaurant) => {         
       restaurant.increment('viewCounts', { by: 1 })
       return res.render('restaurant', { 
         restaurant: restaurant.toJSON()
@@ -53,13 +53,19 @@ const restaurantsController = {
   },
   getDashboard: (req, res, next) => {
     return Restaurant.findByPk(req.params.id, {
-      raw: true,
-      nest: true,
-      include: Category
+      include: [
+        Category, 
+        Comment
+      ]
     })
       .then((restaurant) => {
         if(!restaurant) throw new Error('It does not exist:(')
-        return res.render('dashboard', { restaurant })
+        const rToJSON = restaurant.toJSON()
+        rToJSON.commentCounts = rToJSON.Comments.length
+
+        return res.render('dashboard', { 
+          restaurant: rToJSON,
+        })
       })         
       .catch(err => next(err))
   }   
