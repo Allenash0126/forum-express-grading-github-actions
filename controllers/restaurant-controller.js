@@ -62,6 +62,28 @@ const restaurantsController = {
         return res.render('dashboard', { restaurant })
       })         
       .catch(err => next(err))
-  }   
+  },
+  getFeeds: (req, res, next) => {
+    Promise.all([
+      Restaurant.findAll({
+        limit: 10, 
+        order: [['createdAt', 'desc']],
+        include: [ Category ],
+        nest: true,
+        raw: true        
+      }),
+      Comment.findAll({
+        include: [ User, Restaurant ],        
+        limit: 10,
+        order: [['createdAt', 'desc']],
+        nest: true,
+        raw: true
+      })
+    ])
+      .then(([restaurants, comments]) => {
+        return res.render('feeds', { restaurants, comments })
+      })
+      .catch(err => next(err))
+  }
 }
 module.exports = restaurantsController
