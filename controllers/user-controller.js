@@ -4,6 +4,20 @@ const { Restaurant, Favorite } = require('../models')
 const bcrypt = require('bcryptjs')
 
 const userController = {
+  getTopUsers: (req, res, next) => {
+    return User.findAll({
+      include: [{ model: User, as: 'Followers' }]
+    })
+      .then(users => {
+        users = users.map(user => ({
+          ...user.toJSON(),
+          followerCount: user.Followers.length,
+          isFollowed: user.Followers.includes(req.user.id) // 我的寫法，待驗證是否可以正常運作
+          // isFollowed: req.user.Followings.some(f => f.id === user.id) // 課程的寫法          
+        }))
+        return res.render('top-users', { users })
+      })
+  },
   addFavorite: (req, res, next) => {
     const { restaurantId } = req.params
     const userId = req.user.id
