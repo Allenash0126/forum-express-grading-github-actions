@@ -1,22 +1,55 @@
 const db = require('../models')
 const { User } = db
-const { Restaurant, Favorite } = require('../models')
+const { Restaurant, Favorite, Followship } = require('../models')
 const bcrypt = require('bcryptjs')
 
 const userController = {
+  addFollowing: (req, res, next) => {
+    const followerId = req.user.id
+    const followingId = req.params.userId
+    Promise.all([
+      User.findByPk(followingId),
+      Followship.findOne({
+        where: { followerId, followingId }
+      })
+    ])
+      .then(([user, follow]) => {
+        if(!user) throw new Error('There is no such user :(')
+        if(follow) throw new Error('The user has been within your following list')
+        return Followship.create({ followerId, followingId })
+      })
+      .then(() => res.redirect('back'))
+      .catch(err => next(err))
+  },
+  removeFollowing: (req, res, next) => {
+    return Followship.findOne({
+      where: {
+        followerId: req.user.id,
+        followingId: req.params.userId
+      }
+    })    
+      .then(follow => {
+        if(!follow) throw new Error('The user has not been within your following list')
+        return follow.destroy()
+      })
+      .then(() => res.redirect('back'))
+      .catch(err => next(err))
+  },
   getTopUsers: (req, res, next) => {
     return User.findAll({
       include: [{ model: User, as: 'Followers' }]
     })
       .then(users => {
-        users = users.map(user => ({
-          ...user.toJSON(),
-          followerCount: user.Followers.length,
-          isFollowed: user.Followers.includes(req.user.id) // 我的寫法，待驗證是否可以正常運作
-          // isFollowed: req.user.Followings.some(f => f.id === user.id) // 課程的寫法          
-        }))
-        return res.render('top-users', { users })
+        const result = users
+          .map(user => ({
+            ...user.toJSON(),
+            followerCount: user.Followers.length,
+            isFollowed: req.user.Followings.some(f => f.id === user.id) 
+          }))
+          .sort((a, b) => b.followerCount - a.followerCount)
+            return res.render('top-users', { users: result })
       })
+        .catch(err => next(err))
   },
   addFavorite: (req, res, next) => {
     const { restaurantId } = req.params
