@@ -61,7 +61,7 @@ const restaurantsController = {
       .then((restaurant) => {
         if(!restaurant) throw new Error('It does not exist:(')
         const rToJSON = restaurant.toJSON()
-        rToJSON.commentCounts = rToJSON.Comments.length
+        // rToJSON.commentCounts = rToJSON.Comments.length // AC測試檔在js讀不到length，故將length 移至 dashboard.hbs
 
         return res.render('dashboard', { 
           restaurant: rToJSON,
