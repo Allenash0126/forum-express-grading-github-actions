@@ -1,4 +1,4 @@
-const { User, Comment, Restaurant } = require('../models')
+const { User, Comment, Restaurant, Favorite, Followship } = require('../models')
 const { localFileHandler } = require('../helpers/file-helpers')
 const bcrypt = require('bcryptjs')
 const helpers = require('../helpers/auth-helpers')
