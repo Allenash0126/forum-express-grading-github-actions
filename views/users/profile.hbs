@@ -1,0 +1,29 @@
+<div class="row mb-5" style="background-color: #f0f0f0;">
+  <div class="col-3">
+    <img class="img-fluid" src="{{user.image}}" alt="card image" width="286px" height="180px" style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1">
+  </div>
+
+  <div class="col-3">
+    <h3>{{user.name}}</h3>
+    <h5>{{user.email}}</h5>  
+    {{!-- <h5> 評論數：{{commentCounts}} </h5> --}}
+    <h5> 評論數：{{dataComment.length}} </h5>
+    <a href="/users/{{user.id}}/edit">
+      <button class="btn btn-primary" type="button">edit</button>
+    </a>
+  </div>
+</div>
+
+<div class="mt-2" style="background-color: #f0f0f0;">
+  {{!-- <h5> 評論數：{{commentCounts}} </h5> --}}
+  <h5> 評論數：{{ dataComment.length }} </h5>
+  <div class="row mt-1">
+    {{#each user.Comments}}
+      <div class="col-md-1 shadow-sm">
+        <a href="/restaurants/{{this.restaurantId}}">
+          <img class="card-img-top img-fluid" src="{{this.Restaurant.image}}" alt="card image" width="56px" height="36px" style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1">
+        </a>
+      </div>  
+    {{/each}}
+  </div>
+</div>

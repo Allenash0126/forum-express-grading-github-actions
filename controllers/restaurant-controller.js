@@ -58,13 +58,19 @@ const restaurantsController = {
   },
   getDashboard: (req, res, next) => {
     return Restaurant.findByPk(req.params.id, {
-      raw: true,
-      nest: true,
-      include: Category
+      include: [
+        Category, 
+        Comment
+      ]
     })
       .then((restaurant) => {
         if(!restaurant) throw new Error('It does not exist:(')
-        return res.render('dashboard', { restaurant })
+        const rToJSON = restaurant.toJSON()
+        // rToJSON.commentCounts = rToJSON.Comments.length // AC測試檔在js讀不到length，故將length 移至 dashboard.hbs
+
+        return res.render('dashboard', { 
+          restaurant: rToJSON,
+        })
       })         
       .catch(err => next(err))
   },
