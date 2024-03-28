@@ -1,9 +1,45 @@
 const db = require('../models')
 const { User } = db
-const { Restaurant, Favorite } = require('../models')
+const { Restaurant, Favorite, Like } = require('../models')
 const bcrypt = require('bcryptjs')
 
 const userController = {
+  addLike: (req, res, next) => {
+    const { restaurantId } = req.params
+    const userId = req.user.id
+
+    return Promise.all([
+      Restaurant.findByPk(restaurantId),
+      Like.findOne({
+        where: { userId ,restaurantId }
+      })
+    ])
+      .then(([restaurant, like]) => {
+        if(!restaurant) throw new Error('There is no such restaurant.')
+        if(like) throw new Error('It has been liked :(')
+        return Like.create({ restaurantId, userId })
+      })
+      .then(() => {
+        res.redirect('back')
+      })
+      .catch(err => next(err))
+  },
+  removeLike: (req, res, next) => {
+    const { restaurantId } = req.params
+    const userId = req.user.id
+    
+    return Like.findOne({
+        where: { userId ,restaurantId }
+      })
+      .then(like => {
+        if(!like) throw new Error('It has not been liked list :(')
+        return like.destroy()
+      })
+      .then(() => {
+        res.redirect('back')
+      })
+      .catch(err => next(err))
+  },  
   addFavorite: (req, res, next) => {
     const { restaurantId } = req.params
     const userId = req.user.id
