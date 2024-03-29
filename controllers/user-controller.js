@@ -7,7 +7,7 @@ const userController = {
   addFollowing: (req, res, next) => {
     const followerId = req.user.id
     const followingId = req.params.userId
-    Promise.all([
+    return Promise.all([
       User.findByPk(followingId),
       Followship.findOne({
         where: { followerId, followingId }
@@ -91,7 +91,7 @@ const userController = {
     const { restaurantId } = req.params
     const userId = req.user.id
 
-    Promise.all([
+    return Promise.all([
       Restaurant.findByPk(restaurantId),
       Favorite.findOne({
         where: { userId, restaurantId }
@@ -110,7 +110,7 @@ const userController = {
   removeFavorite: (req, res, next) => {
     const { restaurantId } = req.params
     const userId = req.user.id
-    Favorite.findOne({
+    return Favorite.findOne({
       where: { userId, restaurantId }
     }) 
       .then(favorite => {
