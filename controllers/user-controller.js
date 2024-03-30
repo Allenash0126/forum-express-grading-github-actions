@@ -158,18 +158,20 @@ const userController = {
     // helpers.isSignInUser(req, res) // 因為測試檔讀不到 req.user，所以拿掉
 
     return User.findByPk(id, {
-      include: [{ model: Comment, include: Restaurant }]
+      include: [
+        { model: Comment, include: Restaurant },
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' }
+      ]
     })
       .then(user => {
-        if(!user) throw new Error('There is no such user :(')
-        const dataComment = user.toJSON().Comments ? user.toJSON().Comments : []
-        // const userToJSON = user.toJSON()
+        if(!user) throw new Error('There is no such user :(')     
+        const dataComment =  user.toJSON().Comments ?  user.toJSON().Comments : []
 
         return res.render('users/profile', { 
           user: user.toJSON(),
-          dataComment // AC測試檔在js讀不到length，故將length 移至 dashboard.hbs
-          // user: userToJSON,
-          // commentCounts: userToJSON.Comments.length
+          dataComment, // AC測試檔在js讀不到length，故將length 移至 dashboard.hbs    
         })
       })
       .catch(err => next(err))
