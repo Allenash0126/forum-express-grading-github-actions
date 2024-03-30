@@ -1,4 +1,4 @@
-<div class="row mb-5" style="background-color: #f0f0f0;">
+<div id="div-1" class="row mb-5" style="background-color: #f0f0f0;">
   <div class="col-3">
     <img class="img-fluid" src="{{user.image}}" alt="card image" width="286px" height="180px" style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1">
   </div>
@@ -29,16 +29,83 @@
   </div>
 </div>
 
-<div class="mt-2" style="background-color: #f0f0f0;">
-  {{!-- <h5> 評論數：{{commentCounts}} </h5> --}}
-  <h5> 評論數：{{ dataComment.length }} </h5>
-  <div class="row mt-1">
-    {{#each user.Comments}}
-      <div class="col-md-1 shadow-sm">
-        <a href="/restaurants/{{this.restaurantId}}">
-          <img class="card-img-top img-fluid" src="{{this.Restaurant.image}}" alt="card image" width="56px" height="36px" style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1">
-        </a>
-      </div>  
-    {{/each}}
+<div id="div-2" class="mt-2 d-flex" style="background-color: #f0f0f0;">
+
+  <div id="div-2_人相關" class="row col-4 m-1">
+
+    <div id="div-2_人相關_followings（追蹤者）">
+      <div id="title" class="d-flex">
+        <h5> {{ user.Followings.length }} &nbsp </h5>
+        <span> followings（追蹤者） </span>
+      </div>
+      
+      <div id="image" class="row ">
+        {{#each user.Followings }}
+        <div class="col-md-3 m-1 shadow-sm">
+          <a href="/users/{{this.id}}">
+            <img class="card-img-top img-fluid" src="{{this.image}}" alt="card image" width="56px" height="36px"
+              style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1">
+          </a>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div id="div-2_人相關_followers（追蹤者）">
+      <div id="title" class="d-flex">
+        <h5> {{ user.Followers.length }} &nbsp </h5>
+        <span> followers（追蹤者） </span>
+      </div>
+      
+      <div id="image" class="row ">
+        {{#each user.Followers }}
+        <div class="col-md-3 shadow-sm">
+          <a href="/users/{{this.id}}">
+            <img class="card-img-top img-fluid" src="{{this.image}}" alt="card image" width="56px" height="36px"
+              style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1">
+          </a>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  <div id="div-2_餐廳相關" class="row col-8 m-1">
+    <div id="div-2_餐廳相關_已評論過餐廳" >
+      <div id="title" class="d-flex">
+        <h5>{{ dataComment.length }} &nbsp </h5>
+        <span> 已評論過餐廳 </span>
+      </div>
+    
+      <div id="image" class="row">
+        {{#each user.Comments}}
+        <div class="col-1 m-1 shadow-sm">
+          <a href="/restaurants/{{this.restaurantId}}">
+            <img class="card-img-top img-fluid" src="{{this.Restaurant.image}}" alt="card image" width="56px" height="36px"
+              style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1">
+          </a>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    
+    <div id="div-2_餐廳相關_收藏的餐廳">
+      <div id="title" class="d-flex">
+        <h5> {{ user.FavoritedRestaurants.length }} &nbsp </h5>
+        <span> 收藏的餐廳 </span>
+      </div>
+
+      <div id="image" class="row">
+        {{#each user.FavoritedRestaurants }}
+        <div class="col-md-1 m-1 shadow-sm">
+          <a href="/restaurants/{{this.id}}">
+            <img class="card-img-top img-fluid" src="{{this.image}}" alt="card image" width="56px" height="36px"
+              style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1">
+          </a>
+        </div>
+        {{/each}}
+      </div>
+
+    </div>
   </div>
 </div>
