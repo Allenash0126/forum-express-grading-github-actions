@@ -167,11 +167,26 @@ const userController = {
     })
       .then(user => {
         if(!user) throw new Error('There is no such user :(')     
-        const dataComment =  user.toJSON().Comments ?  user.toJSON().Comments : []
 
+        const restId_FromAllComments = user.toJSON().Comments.map(r => r.restaurantId) // user所有的評論 包含重複評論的餐廳id
+        const restId_DeleteRepeatId = [] // 移除重複評論的餐廳id
+        const temps = restId_FromAllComments.map(r => {
+          if(!restId_DeleteRepeatId.some(restId => restId === r)) {
+            restId_DeleteRepeatId.push(r)
+          }
+        })
+        restId_DeleteRepeatId.sort((a, b) => a - b) // 依照順序排列
+
+        const temps2 = []
+        const imgLocation = restId_DeleteRepeatId.map(rId => ({ // 塞入各餐廳id 所對應的image載點
+          ...temps2,
+          id: rId,
+          image: user.toJSON().Comments.find(Comment => Comment.restaurantId === rId).Restaurant.image
+        }))
+                
         return res.render('users/profile', { 
-          user: user.toJSON(),
-          dataComment, // AC測試檔在js讀不到length，故將length 移至 dashboard.hbs    
+          user: user.toJSON(), 
+          imgLocation
         })
       })
       .catch(err => next(err))
