@@ -1,5 +1,5 @@
-const { Restaurant, User, Category } = require('../models')
-const { localFileHandler } = require('../helpers/file-helpers')
+const { Restaurant, User, Category } = require('../../models')
+const { localFileHandler } = require('../../helpers/file-helpers')
 // 解構賦值如下
 // const db = require('../models')
 // const Restaurant = db.Restaurant

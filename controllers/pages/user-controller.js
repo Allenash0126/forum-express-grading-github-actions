@@ -1,7 +1,7 @@
-const { User, Comment, Restaurant, Favorite, Followship, Like } = require('../models')
-const { localFileHandler } = require('../helpers/file-helpers')
+const { User, Comment, Restaurant, Favorite, Followship, Like } = require('../../models')
+const { localFileHandler } = require('../../helpers/file-helpers')
 const bcrypt = require('bcryptjs')
-const helpers = require('../helpers/auth-helpers')
+const helpers = require('../../helpers/auth-helpers')
 
 const userController = {
   addFollowing: (req, res, next) => {
