@@ -1,18 +1,8 @@
-const { Restaurant, User, Category } = require('../../models')
-const { localFileHandler } = require('../../helpers/file-helpers')
-// 解構賦值如下
-// const db = require('../models')
-// const Restaurant = db.Restaurant
+const adminServices = require('../../services/admin-services')
 
 const adminController = {
   getRestaurants: (req, res, next) => {
-    Restaurant.findAll({
-      raw: true,
-      nest:true,
-      include: [Category]
-    })
-      .then(restaurants => res.render('admin/restaurants', { restaurants }))
-      .catch(error => next(error))
+    adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('admin/restaurants', data))    
   },
   createRestaurants: (req, res, next) => {
     return Category.findAll({
