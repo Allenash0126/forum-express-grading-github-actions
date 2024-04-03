@@ -10,7 +10,20 @@ const adminController = {
     })
       .then(restaurants =>  cb(null, { restaurants }))
       .catch(error => cb(error))
-  }
+  },
+  deleteRestaurant: (req, cb) => {
+    return Restaurant.findByPk(req.params.rest_id)
+      .then(restaurant => {
+        if (!restaurant) {
+          const err = new Error("Restaurant didn't exist!")
+          err.status = 404
+          throw err
+        }
+        return restaurant.destroy()
+      })
+      .then((deletedRestaurant) => cb(null, { restaurant: deletedRestaurant }))
+      .catch(err => cb(err))
+  }  
 }
 
 module.exports = adminController
