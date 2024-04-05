@@ -13,19 +13,13 @@ const adminController = {
       })
       .catch((err) => next(err))
   },
-  postRestaurants: (req, res, next) => {
-    const { name, tel, address, openingHours, description, categoryId } = req.body
-    if (!name) throw new Error('Restaurant name is required!')
-
-    const { file } = req
-
-    localFileHandler(file)
-      .then(filePath => Restaurant.create({ name, tel, address, openingHours, description, categoryId, image: filePath || null }))
-      .then(() => {
-        req.flash('success_messages', 'Restaurant was created successfully!')
-        res.redirect('/admin/restaurants')
-      })
-      .catch(error => next(error))
+  postRestaurant: (req, res, next) => {
+    adminServices.postRestaurant(req, (err, data) => {
+      if(err) return next(err)
+      req.flash('success_messages', '新增成功:)')
+      req.session.createdData = data
+      return res.redirect('admin/restaurants')
+    })
   },
   getRestaurant: (req, res, next) => {
     // rest_id 被定義在 admin.js

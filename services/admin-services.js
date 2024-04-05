@@ -11,6 +11,17 @@ const adminController = {
       .then(restaurants =>  cb(null, { restaurants }))
       .catch(error => cb(error))
   },
+  postRestaurant: (req, cb) => {
+    const { name, tel, address, openingHours, description, categoryId } = req.body
+    if (!name) throw new Error('Restaurant name is required!')
+
+    const { file } = req
+
+    localFileHandler(file)
+      .then(filePath => Restaurant.create({ name, tel, address, openingHours, description, categoryId, image: filePath || null }))
+      .then(newRestaurant => cb(null, { restaurant: newRestaurant }))
+      .catch(error => cb(error))  
+  },  
   deleteRestaurant: (req, cb) => {
     return Restaurant.findByPk(req.params.rest_id)
       .then(restaurant => {
