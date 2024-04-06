@@ -12,7 +12,7 @@ const restaurantsController = {
             ...r.toJSON(),
             favoritedCount: r.FavoritedUsers.length,
             isFavorited: req.user && req.user.FavoritedRestaurants.some(fr => fr.id === r.id),
-            description: r.description.substring(0, 50)
+            description: r.description ? r.description.substring(0, 50) : [] // 避免找不到 description
           }))
           .sort((a, b) => b.favoritedCount - a.favoritedCount)
           .slice(0, 10)

@@ -181,7 +181,7 @@ const userController = {
         const imgLocation = restId_DeleteRepeatId.map(rId => ({ // 塞入各餐廳id 所對應的image載點
           ...temps2,
           id: rId,
-          image: user.toJSON().Comments.find(Comment => Comment.restaurantId === rId).Restaurant.image
+          image: user.toJSON().Comments.find(Comment => Comment.restaurantId === rId).Restaurant ? user.toJSON().Comments.find(Comment => Comment.restaurantId === rId).Restaurant.image : [] // 避免找不到restaurant
         }))
                 
         return res.render('users/profile', { 
