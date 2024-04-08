@@ -2,6 +2,7 @@ const { User, Comment, Restaurant, Favorite, Followship, Like } = require('../..
 const { localFileHandler } = require('../../helpers/file-helpers')
 const bcrypt = require('bcryptjs')
 const helpers = require('../../helpers/auth-helpers')
+const userServices = require('../../services/user-services')
 
 const userController = {
   addFollowing: (req, res, next) => {
@@ -126,22 +127,12 @@ const userController = {
     res.render('signup')
   },
   signUp: (req, res, next) => {
-    const { name, email, password, passwordCheck } = req.body
-    if (password !== passwordCheck) throw new Error(' Passwords do not match')
-    User.findOne({
-      where: { email }
+    userServices.signUp(req, (err, data) => {
+      if (err) return next(err)
+      req.session.userCreated = data
+      req.flash('success_messages', '註冊成功！')
+      return res.redirect('/signin')
     })
-      .then(user => {
-        if (user) throw new Error(' Email already exists!')
-        return bcrypt.hash(password, 10)
-      })
-
-      .then(hash => User.create({ name, email, password: hash }))
-      .then(() => {
-        req.flash('success_messages', '註冊成功！')
-        res.redirect('/signin')
-      })
-      .catch(err => next(err))
   },
   signInPage: (req, res) => {
     res.render('signin')
