@@ -1,50 +1,33 @@
 const { Category } = require('../../models')
+const categoryServices = require('../../services/category-services')
+
 const categoryController = {
-  getCategories: (req, res, next) => {
-    return Promise.all([
-      Category.findAll({raw: true}),
-      req.params.id ? Category.findByPk(req.params.id,{raw: true}) : null
-    ])
-      .then(([categories, category]) => {
-        res.render('admin/categories', { categories, category })
-      })
-      .catch(err => next(err))
+  getCategories: (req, res, next) => {    
+    categoryServices.getCategories(req, (err, data) => err ? next(err) : res.render('admin/categories', data ))
   },
   postCategories: (req, res, next) => {
-    const { name } = req.body
-    if(!name) throw new Error('Category name is required!')
-    return Category.create({name})
-      .then(() => {
-        req.flash('success_messages', 'Category新增成功!')
-        res.redirect('/admin/categories')
-      })
-      .catch(err => next(err))
+    categoryServices.postCategories(req, (err, data) => {
+      if (err) return next(err)
+      req.session.postCategories = data
+      req.flash('success_messages', '新增成功！')
+      return res.redirect('/admin/categories')     
+    })
   }, 
   putCategory: (req, res, next) => {
-    const { name } = req.body
-    if(!name) throw new Error('Category name is required!')
-    return Category.findByPk(req.params.id)
-      .then((category) => {
-        if(!category) throw new Error('It does not exist :(')
-        return category.update({ name })
-      })
-      .then(() => {
-        req.flash('success_messages', '編輯成功！')
-        res.redirect('/admin/categories')
-      })
-      .catch(err => next(err))
+    categoryServices.putCategory(req, (err, data) => {
+      if (err) return next(err)
+      req.session.putCategory = data
+      req.flash('success_messages', '編輯成功！')
+      return res.redirect('/admin/categories')     
+    })
   },
   deleteCategory: (req, res, next) => {
-    return Category.findByPk(req.params.id)
-      .then((category) => {
-        if(!category) throw new Error('It does not exist :(')
-        return category.destroy()
-      })
-      .then(() => {
-        req.flash('success_messages', '刪除成功！')
-        res.redirect('/admin/categories')
-      })
-      .catch(err => next(err))
+    categoryServices.deleteCategory(req, (err, data) => {
+      if (err) return next(err)
+      req.session.deletedCategory = data
+      req.flash('success_messages', '刪除成功！')
+      return res.redirect('/admin/categories')     
+    })    
   }
 }
 

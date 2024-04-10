@@ -42,14 +42,10 @@ const adminController = {
   },
   patchUser: (req, res, next) => {
     adminServices.patchUser(req, (err, data) => {
-      // console.log('data~~~~~~~~~', data)
-      // console.log('err~~~~~~~~~', err)
-
       if (err) return next(err)
       req.session.changeAuthData = data
       req.flash('success_messages', '使用者權限變更成功')
       return res.redirect('/admin/users')   
-      // return next(err)   
     })
   }
 }
