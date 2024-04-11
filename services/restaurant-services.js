@@ -50,6 +50,7 @@ const restaurantServices = {
       ]
     })
     .then((restaurant) => {
+      if (!restaurant) throw new Error('There is no such restaurant id :(')
       const isFavorited = restaurant.FavoritedUsers.some(f => f.id === req.user.id)
       const isLiked = restaurant.LikedUsers.some(lu => lu.id === req.user.id)
       restaurant.increment('viewCounts', { by: 1 })
@@ -105,12 +106,14 @@ const restaurantServices = {
     return Restaurant.findByPk(req.params.id, {
       include: [
         Category, 
-        Comment
+        Comment,
+        { model: User, as: 'FavoritedUsers' }
       ]
     })
       .then((restaurant) => {
         if(!restaurant) throw new Error('It does not exist:(')
         const rToJSON = restaurant.toJSON()
+        console.log('restaurant.toJSON()~~~~~~~', restaurant.toJSON())
 
         return cb(null, { restaurant: rToJSON })
       })         
